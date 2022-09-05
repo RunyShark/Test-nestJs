@@ -1,13 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
+import { User } from './entitis/user.entiti';
+import { getModelToken } from '@nestjs/mongoose';
+import { UserModule } from './user.module';
 
 describe('UserController', () => {
   let controller: UserController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-    }).compile();
+      imports: [UserModule],
+    })
+      .overrideProvider(getModelToken(User.name))
+      .useValue(jest.fn())
+      .compile();
 
     controller = module.get<UserController>(UserController);
   });

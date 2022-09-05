@@ -2,15 +2,19 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateUserDTO } from './dtos/user.dots';
 import { User } from './entitis/user.entiti';
 import { UserService } from './user.service';
-
+import { UserSerializer } from './serializer/UserSerializer';
+import { plainToInstance } from 'class-transformer';
 @Controller('user')
 export class UserController {
   constructor(private readonly serviceUser: UserService) {}
 
   @Get()
-  async getUser(): Promise<User[]> {
+  async getUser(): Promise<UserSerializer[]> {
     try {
-      return await this.serviceUser.getUser();
+      const data = await this.serviceUser.getUser();
+      return plainToInstance(UserSerializer, data, {
+        excludeExtraneousValues: true,
+      });
     } catch (error) {}
   }
 
